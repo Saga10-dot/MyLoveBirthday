@@ -1,113 +1,120 @@
-const canvas = document.getElementById("fireworksCanvas");
+const canvas = document.getElementById("mainCanvas");
 const ctx = canvas.getContext("2d");
-
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let particles = [];
-let step = 0;
+let elements = [];
+let giftStep = 0;
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+function goToPage2() {
+    document.getElementById("page1").classList.add("hidden");
+    document.getElementById("page2").classList.remove("hidden");
+}
 
-// Fungsi ini harus ada di scope global agar bisa dipanggil onclick
-window.handleSurprise = function() {
-    step++;
-    const btn = document.getElementById("actionBtn");
-
-    if (step === 1) {
-        btn.innerText = "WOW, LAGI!";
-        createGardenEffect();
-    } else if (step === 2) {
-        btn.innerText = "LIHAT KEJUTAN TERAKHIR!";
-        for(let i=0; i<5; i++) {
-            setTimeout(() => launchFirework("flower"), i * 500);
-        }
-    } else if (step === 3) {
-        btn.style.display = "none";
-        document.getElementById("card").classList.remove("hidden");
-        launchFirework("text");
-        // Kembang api otomatis setelah kartu muncul
-        setInterval(() => launchFirework("random"), 1500);
+function handleGift() {
+    giftStep++;
+    if (giftStep === 1) {
+        // Sesi 1: Bunga, Balon, Confetti
+        startGardenAndBalloons();
+        startConfetti();
+    } else if (giftStep % 2 === 0) {
+        // Sesi 2: Kembang Api Teks (Setiap klik genap)
+        launchFireworkText();
+    } else {
+        // Sesi 3: Kembang Api Biasa (Setiap klik ganjil setelah step 1)
+        launchFireworkNormal();
     }
-};
+}
 
-class Particle {
-    constructor(x, y, color, speed, angle) {
+// Objek untuk partikel (Bunga, Balon, Kembang api)
+class Element {
+    constructor(x, y, type, color, speedY, text = "") {
         this.x = x;
         this.y = y;
+        this.type = type;
         this.color = color;
-        this.speed = speed;
-        this.angle = angle;
-        this.vx = Math.cos(this.angle) * this.speed;
-        this.vy = Math.sin(this.angle) * this.speed;
+        this.speedY = speedY;
+        this.speedX = (Math.random() - 0.5) * 2;
         this.alpha = 1;
-        this.gravity = 0.05;
+        this.text = text;
+        this.life = 0;
     }
 
     draw() {
         ctx.save();
         ctx.globalAlpha = this.alpha;
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, 2.5, 0, Math.PI * 2);
         ctx.fillStyle = this.color;
-        ctx.fill();
+        if (this.type === 'balloon') {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 15, 0, Math.PI * 2);
+            ctx.fill();
+        } else if (this.type === 'flower') {
+            ctx.font = "20px Arial";
+            ctx.fillText("🌸", this.x, this.y); // Bisa diganti mawar 🌹 dll
+        } else if (this.type === 'textFW') {
+            ctx.font = "bold 35px Montserrat";
+            ctx.textAlign = "center";
+            ctx.fillText(this.text, this.x, this.y);
+        } else {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
         ctx.restore();
     }
 
     update() {
-        this.vy += this.gravity;
-        this.x += this.vx;
-        this.y += this.vy;
-        this.alpha -= 0.01;
+        this.y -= this.speedY;
+        this.x += this.speedX;
+        if (this.type === 'textFW') {
+            this.life++;
+            if (this.life > 120) this.alpha -= 0.02; // Muncul 2 detik (60fps * 2)
+        } else {
+            this.alpha -= 0.005;
+        }
     }
 }
 
-function launchFirework(type) {
+function startGardenAndBalloons() {
+    // Balon terbang durasi sedang
+    setInterval(() => {
+        const colors = ['#FF9999', '#99FF99', '#9999FF', '#FFFF99'];
+        elements.push(new Element(Math.random() * canvas.width, canvas.height, 'balloon', colors[Math.floor(Math.random()*4)], 2));
+    }, 500);
+
+    // Bunga muncul dari bawah
+    setInterval(() => {
+        elements.push(new Element(Math.random() * canvas.width, canvas.height, 'flower', '', 1.5));
+    }, 700);
+}
+
+function startConfetti() {
+    for(let i=0; i<100; i++) {
+        // Confetti dari kiri & kanan atas
+        const xPos = i % 2 === 0 ? 0 : canvas.width;
+        elements.push(new Element(xPos, 0, 'pixel', `hsl(${Math.random()*360}, 100%, 50%)`, -Math.random()*3));
+    }
+}
+
+function launchFireworkText() {
+    elements.push(new Element(canvas.width/2, canvas.height/2, 'textFW', '#4682B4', 0, "HAPPY BIRTHDAY"));
+}
+
+function launchFireworkNormal() {
     const x = Math.random() * canvas.width;
-    const y = canvas.height;
-    const targetY = Math.random() * (canvas.height * 0.5);
-    explode(x, targetY, type);
-}
-
-function explode(x, y, type) {
-    const colors = ['#FFFFFF', '#4682B4', '#B0E0E6', '#FFD700'];
-    
-    if (type === "text") {
-        // Teks kembang api sederhana (visual flash)
-        particles.push(new Particle(x, y, '#4682B4', 0, 0));
-    }
-
-    for (let i = 0; i < 50; i++) {
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        particles.push(new Particle(x, y, color, Math.random() * 4, Math.random() * Math.PI * 2));
-    }
-}
-
-function createGardenEffect() {
-    // Efek bunga bermunculan dari bawah
-    const flowerColors = ['#FF69B4', '#FFFFFF', '#ADD8E6', '#FFD700'];
-    for (let i = 0; i < 40; i++) {
-        setTimeout(() => {
-            const x = Math.random() * canvas.width;
-            particles.push(new Particle(x, canvas.height, flowerColors[i%4], Math.random() * 5 + 2, -Math.PI/2));
-        }, i * 50);
+    const y = Math.random() * (canvas.height/2);
+    for(let i=0; i<30; i++) {
+        elements.push(new Element(x, y, 'pixel', '#FFF', (Math.random()-0.5)*4));
     }
 }
 
 function animate() {
-    // Memberikan efek trail transparan
-    ctx.fillStyle = 'rgba(135, 206, 235, 0.3)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    particles.forEach((p, index) => {
-        p.update();
-        p.draw();
-        if (p.alpha <= 0) particles.splice(index, 1);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    elements.forEach((el, index) => {
+        el.update();
+        el.draw();
+        if (el.alpha <= 0 || el.y < -50) elements.splice(index, 1);
     });
-
     requestAnimationFrame(animate);
 }
 

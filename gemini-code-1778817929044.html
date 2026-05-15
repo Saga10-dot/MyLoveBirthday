@@ -3,22 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Happy 26th Birthday, Widiantari!</title>
+    <title>Happy Birthday Widiantari</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Menggunakan Google Fonts untuk kesan estetik -->
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <canvas id="fireworksCanvas"></canvas>
-    
-    <div class="main-container" id="mainContainer">
-        <h1 class="title">Happy Birthday</h1>
-        <h2 class="name">I Gusti Agung Ayu Widiantari</h2>
-        <p class="sub-text">Astungkara selalu diberikan yang terbaik! 🎂🎉</p>
-        
-        <button id="actionBtn" onclick="handleSurprise()">PRESS TO GET THE SURPRISE!</button>
-        
-        <div id="card" class="card hidden">
+    <canvas id="mainCanvas"></canvas>
+
+    <!-- HALAMAN 1: PEMBUKA -->
+    <div id="page1" class="container">
+        <h1 class="title-p1">Happy Birthday Sayangku!</h1>
+        <p class="sub-p1">Semoga apa yang selalu kamu semogakan terwujud ya!</p>
+        <button class="btn-grey" onclick="goToPage2()">Press to unlock the Gift</button>
+    </div>
+
+    <!-- HALAMAN 2: KARTU UCAPAN (HIDDEN AWALNYA) -->
+    <div id="page2" class="container hidden">
+        <div class="card">
             <p class="card-text">
                 Dear My lovely,<br><br>
                 Happy turning 26th Birthday! <br>
@@ -28,6 +29,7 @@
                 <strong>Bagas</strong>
             </p>
         </div>
+        <button id="giftBtn" class="btn-blue" onclick="handleGift()">Gift</button>
     </div>
 
     <script src="script.js"></script>

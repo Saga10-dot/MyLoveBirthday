@@ -1,88 +1,87 @@
 :root {
     --sky-blue: #87CEEB;
     --deep-blue: #4682B4;
-    --light-grey: #F5F5F5;
+    --grey-btn: #A9A9A9;
     --white: #FFFFFF;
 }
 
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
     overflow: hidden;
     background-color: var(--sky-blue);
     font-family: 'Montserrat', sans-serif;
-}
-
-/* Memastikan kontainer benar-benar di tengah */
-body {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.main-container {
+.container {
     position: relative;
-    z-index: 10; /* Angka tinggi agar berada di atas canvas */
-    background: rgba(255, 255, 255, 0.9);
-    padding: 30px;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    z-index: 10;
     text-align: center;
-    max-width: 85%;
-    width: 350px;
-    pointer-events: auto; /* Memastikan elemen ini bisa menerima klik */
+    width: 90%;
+    max-width: 400px;
+    animation: fadeIn 1s ease-in;
 }
 
-.title {
-    font-family: 'Dancing Script', cursive;
+.title-p1 {
     color: var(--deep-blue);
-    font-size: 2.2em;
-    margin: 0 0 10px 0;
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.5em;
 }
 
-.name {
-    font-size: 1.1em;
-    color: #444;
-    margin-bottom: 20px;
-    line-height: 1.4;
-}
+.sub-p1 { color: #555; margin-bottom: 30px; }
 
-button {
-    background-color: var(--deep-blue);
-    color: var(--white);
+/* Button Halaman 1 */
+.btn-grey {
+    background-color: var(--grey-btn);
+    color: white;
     border: none;
-    padding: 15px 25px;
-    font-size: 14px;
-    font-weight: bold;
+    padding: 15px 30px;
+    border-radius: 12px; /* Tepi tidak tajam */
     cursor: pointer;
-    border-radius: 50px;
-    z-index: 11;
-    position: relative;
-    transition: all 0.3s ease;
+    font-weight: bold;
 }
 
-button:active {
-    transform: scale(0.95);
-}
-
+/* Card Halaman 2 */
 .card {
-    margin-top: 20px;
-    padding: 15px;
-    background: var(--light-grey);
-    border-radius: 10px;
-    border-left: 4px solid var(--deep-blue);
+    background: var(--white);
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border-left: 8px solid var(--deep-blue);
+    margin-bottom: 20px;
 }
 
-.hidden { display: none; }
+.card-text {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.2em;
+    line-height: 1.6;
+    color: #333;
+    text-align: left;
+}
+
+.btn-blue {
+    background-color: var(--deep-blue);
+    color: white;
+    border: none;
+    padding: 12px 40px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.1em;
+}
+
+.hidden { display: none !important; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
 canvas {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1; /* Di bawah kontainer */
-    pointer-events: none; /* Klik akan menembus canvas */
+    top: 0; left: 0;
+    z-index: 1;
+    pointer-events: none;
 }
